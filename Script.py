@@ -11,7 +11,6 @@ cap = cv2.VideoCapture("Your RSTP/IP Camera HERE!!!!!")
 detection = False
 detection_stopped_time = None
 timer_started = False
-
 SECONDS_TO_RECORD_AFTER_DETECTION = 5
 
 
