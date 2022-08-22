@@ -4,8 +4,7 @@ import datetime
 
 # Cameras
 
-cap = cv2.VideoCapture("Your RSTP/IP Camera HERE!!!!!")
-
+cap = cv2.VideoCapture("Your RSTP Link HERE")
 
 # Instances
 detection = False
@@ -18,6 +17,7 @@ SECONDS_TO_RECORD_AFTER_DETECTION = 5
 
 def rescale_frame(frame, percent=75):
     """Method responsible for scale the frame"""
+
     width = int(frame.shape[1] * percent / 100)
     height = int(frame.shape[0] * percent / 100)
     dim = (width, height)
@@ -26,22 +26,19 @@ def rescale_frame(frame, percent=75):
 
 def element(frame):
     """Method responsible for analyse the frame"""
-    face = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-    # body = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_fullbody.xml")
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    # person = body.detectMultiScale(gray, 1.8, 2)
-    faces = face.detectMultiScale(gray, 1.8, 5)
 
-    return faces
+    body = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_upperbody.xml")
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    person = body.detectMultiScale(gray, 1.8, 3)
+
+    return person
 
 
 def record():
     """Method responsible for automate the recording of the footage"""
 
     current_time = datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
-
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-
     frame_size = (int(cap.get(3)), int(cap.get(4)))
 
     film = cv2.VideoWriter(
@@ -56,12 +53,12 @@ class Cctv:
         _, frame = cap.read()
 
         # Image Analysis
-        scale = rescale_frame(frame, 85)
+        scale = rescale_frame(frame, percent=145)
         element(frame)
 
         # Time Stamp Configuration
         font = cv2.FONT_HERSHEY_PLAIN
-        cv2.putText(scale, str(datetime.datetime.now()), (1, 15),
+        cv2.putText(scale, str(datetime.datetime.now()), (1, 530),
                     font, 1, (255, 255, 230), 2, cv2.LINE_AA)
 
         # Main Object
